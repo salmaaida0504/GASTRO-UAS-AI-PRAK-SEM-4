@@ -1,7 +1,6 @@
 # Sistem Pakar Diagnosa Penyakit Lambung Berbasis Website
 
 Tugas Ujian Akhir Semester Mata Kuliah Kecerdasan Buatan Praktikum
-Bahasa pemrograman yang digunakan pada website ini yaitu python
 
 ## ANGGOTA KELOMPOK :
 
