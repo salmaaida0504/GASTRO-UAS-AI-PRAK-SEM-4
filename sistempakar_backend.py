@@ -1,353 +1,420 @@
 from flask import Flask, session, redirect, url_for, render_template, request
 from markupsafe import Markup
+
 app = Flask(__name__)
 app.secret_key = 'isinya password buat session'
 app.static_folder = 'static'
 
-daftarGejala = ['Gigi terasa ngilu','Gigi terasa berdenyut','Kepala terasa pusing','Terdapat lubang pada gigi','Gusi bengkak','Demam (suhu badan diatas 38 derajat)','Bau mulut','Gusi berwarna merah tua','Gusi rentan berdarah','Adanya plak/karang gigi','Mulut terasa kering','Sering dehidrasi','Lapisan lidah terasa tebal','Cairan ludah berkurang','Adanya benjolan putih/abu','Terasa luka dan pedih','Gigi terasa sakit','Sakit saat mengunyah','Gigi terasa sensitive','Bentuk gigi tampak terkikis','Gigi terasa nyeri saat makan/minum panas dan dingin','Ngilu berkepanjangan (pada gigi)','Gusi menurun','Sakit setelah pencabutan gigi','Sakit sampai kepala,telinga,mata,leher','Gigi tidak sejajar','Perubahan pada wajah','Tidak nyaman ketika ngunyah dan menggigit','Merasa tidak enak pada mulut','Gigi longgar','Lidah membesar','Nyeri pada lidah','Perubahaan warna pada lidah','Permukaan ldah licin','Warna permukaan lidah kemerahan','Gigi terlihat jarang- jarang','Gigi terlihat tonggos kedepan','Ukuran gigi dan rahan tidak sesuai','Adanya bercak pada sudut bibir','Bercak terasa gatal nyeri dan panas pada bibir','Bila di raba, bercak terasa keras pada bibir','Kadang bercak juga bisa berdarah pada bibir','Cadel','Gigi sulung copot sebelum waktunya (prematur)']
-daftarPenyakit = ['Karies gigi (gigi berlubang)','Gingvitis (radang gusi)','Lidah putih','Stomatitis (sariawan)','Abses gigi (gusi bengkak/nanah)','Abrasi gigi (hilangnya struktur gigi)','Gigi sensitive','Alveolar osteitis (peradangan)','Maloklusi (gigi berdesakan)','Resesi gusi (penurunan gusi)','Gloositis (radang lidah)','Crowded (gigi berjejal)','Cheilitis (radang bibir)']
-solusiPenyakit = ['Tambal Gigi, Perawatan Saluran akar gigi, dan Cabut gigi','Obat pereda nyeri,Obat kumur, dan Obat antibiotik','Minum banyak air untuk membantu menghilangkan bakteri dan Menyikatnya dengan pembersih lidah khusu','Pengobatan stomatitis aftosa,Pengobatan stomatitis herpes','Perawatan saluran akar (root canal),Cabut gigi','Pembuatan Mahkota Gigi (Crown),Penambalan Gigi','Menggosok Gigi dengan benar,Hindari makanan dan minuman asam','Pemberian obat kumur atau gel antibakteri segera sebelum dan sesudah operasi,Pemberian larutan antiseptik diberikan pada luka','Pasang kawat gigi,Cabut gigi','Perawatan dengan scaling dan root planning','Menjaga kesehatan rongga mulut dengan cara menyikat gigi dua kali sehari (setelah sarapan dan sebelum tidur),Perubahan pola makan untuk mengatasi permasalahan nutrisi yang dapat menjadi penyebab terjadinya glositis','Perawatan orthodonsi','Salep anti jamur,Salep antibakteri']
-gejala = 0
+daftarGejala = {
+    'G01': 'Mual pada perut ',
+    'G02': 'Nyeri di ulu hati ',
+    'G03': 'Perut kembung ',
+    'G04': 'Sendawa berlebih',
+    'G05': 'Sulit tidur ',
+    'G06': 'Anemia ',
+    'G07': 'BAB berwarna hitam',
+    'G08': 'Sering Cegukan ',
+    'G09': 'Sakit tenggorokan ',
+    'G10': 'Mudah merasa kenyang',
+    'G11': 'Kadar gula darah tidak terkontrol ',
+    'G12': 'Asam dan pahit pada mulut ',
+    'G13': 'Muntah darah ',
+    'G14': 'BAB Berdarah ',
+    'G15': 'Penurunan berat badan ',
+}
+
+daftarPenyakit = {
+    'A01': 'Tukak Lambung (Ulkus Peptikum)',
+    'A02': 'Gastroparesis',
+    'A03': 'GERD (Gastroesophageal Reflux Disease)',
+    'A04': 'Gastritis',
+    'A05': 'Kanker lambung',
+}
+
+solusiPenyakit = {
+    'S01': 'Hindari makanan pedas, asam, dan berlemak; berhenti merokok; hindari alkohol.',
+    'S02': 'Makan dalam porsi kecil dan sering; hindari makanan tinggi serat dan lemak; mengkonsumsi makanan lunak atau cair.',
+    'S03': 'Makan dalam porsi kecil dan sering; hindari makanan pedas, berlemak, dan asam; hindari makan sebelum tidur; Menurunkan berat badan jika kelebihan berat badan.',
+    'S04': 'Makan dalam porsi kecil dan sering; hindari makanan pedas, berlemak, dan asam; Mengelola stres dengan teknik relaksasi; hindari alkohol dan merokok.',
+    'S05': 'Operasi; kemoterapi; Dukungan nutrisi untuk menjaga berat badan dan kesehatan; konseling untuk dukungan emosional dan psikologis.',
+}
+
+rules = {
+    'A01': {'gejala': ['G01', 'G02', 'G03', 'G04'], 'solusi': 'S01'},
+    'A02': {'gejala': ['G01', 'G02', 'G03', 'G10', 'G15'], 'solusi': 'S02'},
+    'A03': {'gejala': ['G01', 'G03', 'G05', 'G09', 'G12'], 'solusi': 'S03'},
+    'A04': {'gejala': ['G01', 'G02', 'G07', 'G08'], 'solusi': 'S04'},
+    'A05': {'gejala': ['G02', 'G03', 'G06', 'G13', 'G14', 'G15'], 'solusi': 'S05'},
+}
 
 def checkGejala():
-    if request.form.get('pilihan') == 'ya':
+    pilihan = request.form.get('pilihan')
+    if pilihan == 'ya':
         return True
-    if request.form.get('pilihan') == 'tidak':
+    elif pilihan == 'tidak':
         return False
     else:
-        return checkGejala()
+        return None
+
+def evaluate_gejala(gejala_list):
+    for diagnosis, rule in rules.items():
+        if all(gejala in gejala_list for gejala in rule['gejala']):
+            return diagnosis
+    return None
 
 @app.route('/')
 def index():
-   session.pop('namaPasien', None)
-   session.pop('gejalaPasien', None)
-   session.pop('logs', None)
-   session.pop('logs2', None)
-   session['gejalaPasien'] = 0
-   session['logs'] = 0
-   session['logs2'] = 0
-   return render_template('index.html', link = url_for('index'))
+    session.clear()
+    session['gejalaPasien'] = 'G01'
+    session['logs'] = []
+    return render_template('index.html', link=url_for('index'))
 
-@app.route('/welcome',methods = ['POST', 'GET'])
+@app.route('/welcome', methods=['POST', 'GET'])
 def welcome():
-   if request.method == 'POST':
-      name = request.form.get('Name')
-      session['namaPasien'] = name
-      gejalanya = session['gejalaPasien']
-      pertanyaan = daftarGejala[gejalanya]
-      return render_template("welcome.html", name = name,  pertanyaan = pertanyaan, link = url_for('index'))
+    if request.method == 'POST':
+        name = request.form.get('Name')
+        session['namaPasien'] = name
+        gejalanya = session['gejalaPasien']
+        pertanyaan = daftarGejala[gejalanya]
+        return render_template("welcome.html", name=name, pertanyaan=pertanyaan, link=url_for('index'))
 
-@app.route('/result',methods = ['POST', 'GET'])
+@app.route('/result', methods=['POST', 'GET'])
 def result():
-   if request.method == 'POST':
-      #=============================================================Logs 0
-      if session['logs'] == 0 and checkGejala():
-         if session['gejalaPasien'] == 0: # Gejala 1
-            session['gejalaPasien'] = 1
-            session['logs'] = 1
+    if request.method == 'POST':
+        gejala_terjadi = checkGejala()
+
+        if gejala_terjadi is None:
             return redirect(url_for('diagnosa'))
 
-      #=============================================================Logs 1
-      elif session['logs'] == 1  and checkGejala():
-         if session['gejalaPasien'] == 1: # Gejala 1
-            session['gejalaPasien'] = 2
-            session['logs'] = 2
-            return redirect(url_for('diagnosa'))
-         elif session['gejalaPasien'] == 5 and session['logs2'] == 0: # Gejala 8
-            session['gejalaPasien'] = 6
-            session['logs'] = 2
-            return redirect(url_for('diagnosa'))
-         elif session['gejalaPasien'] == 10: # Gejala 3
-            session['gejalaPasien'] = 11
-            session['logs'] = 2
-            return redirect(url_for('diagnosa'))
-         elif session['gejalaPasien'] == 13: # Gejala 4
-            session['gejalaPasien'] = 14
-            session['logs'] = 2
-            return redirect(url_for('diagnosa'))
-         elif session['gejalaPasien'] == 25 and session['logs2'] == 0: # Gejala 9
-            session['gejalaPasien'] = 26
-            session['logs'] = 2
-            return redirect(url_for('diagnosa'))
-         elif session['gejalaPasien'] == 30: # Gejala 11
-            session['gejalaPasien'] = 31
-            session['logs'] = 2
-            return redirect(url_for('diagnosa'))
-         elif session['gejalaPasien'] == 35: # Gejala 12
-            session['gejalaPasien'] = 36
-            session['logs'] = 2
-            return redirect(url_for('diagnosa'))
-         elif session['gejalaPasien'] == 38: # Gejala 13
-            session['gejalaPasien'] = 39
-            session['logs'] = 2
-            return redirect(url_for('diagnosa'))
-         elif session['gejalaPasien'] == 18: # Gejala 6
-            session['gejalaPasien'] = 19
-            session['logs'] = 2
-            return redirect(url_for('diagnosa'))
-         elif session['gejalaPasien'] == 20: # Gejala 7
-            session['gejalaPasien'] = 21
-            session['logs'] = 2
-            return redirect(url_for('diagnosa'))
-         elif session['gejalaPasien'] == 25 and session['logs2'] == 1: # Gejala 7
-            session['gejalaPasien'] = 28
-            session['logs'] = 2
-            return redirect(url_for('diagnosa'))
-         elif session['gejalaPasien'] == 4 and session['logs2'] == 1: # Gejala 2
-            session['gejalaPasien'] = 6
-            session['logs'] = 2
-            session['logs2'] = 1
-            return redirect(url_for('diagnosa'))
-         elif session['gejalaPasien'] == 5 and session['logs2'] == 1: # Gejala 5
-            session['gejalaPasien'] = 16
-            session['logs'] = 2
-            session['logs2'] = 1
-            return redirect(url_for('diagnosa'))
+        current_gejala = session['gejalaPasien']
+        if gejala_terjadi:
+            session['logs'].append(current_gejala)
 
-      #=============================================================Logs 2
-      elif session['logs'] == 2 and checkGejala():
-         if session['gejalaPasien'] == 2: # Gejala 1
-            session['gejalaPasien'] = 3
-            session['logs'] = 3
-            return redirect(url_for('diagnosa'))  
-         elif session['gejalaPasien'] == 6 and session['logs2'] == 0: # Gejala 8
-            session['gejalaPasien'] = 16
-            session['logs'] = 3
-            return redirect(url_for('diagnosa'))
-         elif session['gejalaPasien'] == 11: # Gejala 3
-            session['gejalaPasien'] = 12
-            session['logs'] = 3
-            return redirect(url_for('diagnosa'))
-         elif session['gejalaPasien'] == 14: # Gejala 4
-            session['gejalaPasien'] = 15
-            session['logs'] = 3
-            return redirect(url_for('diagnosa'))
-         elif session['gejalaPasien'] == 26: # Gejala 9
-            session['gejalaPasien'] = 27
-            session['logs'] = 3
-            return redirect(url_for('diagnosa'))
-         elif session['gejalaPasien'] == 31: # Gejala 11
-            session['gejalaPasien'] = 32
-            session['logs'] = 3
-            return redirect(url_for('diagnosa'))
-         elif session['gejalaPasien'] == 36: # Gejala 12
-            session['gejalaPasien'] = 37
-            session['logs'] = 3
-            return redirect(url_for('diagnosa'))
-         elif session['gejalaPasien'] == 39: # Gejala 13
-            session['gejalaPasien'] = 40
-            session['logs'] = 3
-            return redirect(url_for('diagnosa'))
-         elif session['gejalaPasien'] == 19: # Gejala 6
-            session['gejalaPasien'] = 21
-            session['logs'] = 3
-            return redirect(url_for('diagnosa'))
-         elif session['gejalaPasien'] == 21: # Gejala 7
-            session['gejalaPasien'] = 22
-            session['logs'] = 3
-            return redirect(url_for('diagnosa'))
-         elif session['gejalaPasien'] == 28: # Gejala 7
-            session['gejalaPasien'] = 29
-            session['logs'] = 3
-            return redirect(url_for('diagnosa'))
-         elif session['gejalaPasien'] == 6 and session['logs2'] == 1: # Gejala 2
-            session['gejalaPasien'] = 7
-            session['logs'] = 3
-            session['logs2'] = 1
-            return redirect(url_for('diagnosa'))
-         elif session['gejalaPasien'] == 16 and session['logs2'] == 1: # Gejala 5
-            session['gejalaPasien'] = 17
-            session['logs'] = 3
-            session['logs2'] = 1
-            return redirect(url_for('diagnosa'))
- 
-
-      #=============================================================Logs 3
-      elif session['logs'] == 3 and checkGejala():
-         if session['gejalaPasien'] == 3: # Gejala 1
-            session['gejalaPasien'] = 5
-            session['logs'] = 4
-            return redirect(url_for('diagnosa'))
-         if session['gejalaPasien'] == 16: # Gejala 8
-            session['gejalaPasien'] = 23
-            session['logs'] = 4
-            return redirect(url_for('diagnosa'))
-         if session['gejalaPasien'] == 12: # Gejala 3
-            session['gejalaPasien'] = 13
-            session['logs'] = 4
-            return redirect(url_for('diagnosa'))
-         if session['gejalaPasien'] == 15: # Gejala 4
-            terjangkitPenyakit = daftarPenyakit[3]
-            solusiPenyakitnya = "Solusi: " + solusiPenyakit[3]
-            return render_template("result.html", terjangkitPenyakit = terjangkitPenyakit, solusiPenyakitnya = solusiPenyakitnya, awal = url_for('index'))
-         if session['gejalaPasien'] == 27: # Gejala 9
-            session['gejalaPasien'] = 42
-            session['logs'] = 4
-            return redirect(url_for('diagnosa'))
-         if session['gejalaPasien'] == 32: # Gejala 11
-            session['gejalaPasien'] = 33
-            session['logs'] = 4
-            return redirect(url_for('diagnosa'))
-         if session['gejalaPasien'] == 37: # Gejala 12
-            session['gejalaPasien'] = 43
-            session['logs'] = 4
-            return redirect(url_for('diagnosa'))
-         if session['gejalaPasien'] == 40: # Gejala 13
-            session['gejalaPasien'] = 41
-            session['logs'] = 4
-            return redirect(url_for('diagnosa'))
-         if session['gejalaPasien'] == 21: # Gejala 6
-            terjangkitPenyakit = daftarPenyakit[5]
-            solusiPenyakitnya = "Solusi: " + solusiPenyakit[5]
-            return render_template("result.html", terjangkitPenyakit = terjangkitPenyakit, solusiPenyakitnya = solusiPenyakitnya, awal = url_for('index'))
-         if session['gejalaPasien'] == 22: # Gejala 7
-            terjangkitPenyakit = daftarPenyakit[6]
-            solusiPenyakitnya = "Solusi: " + solusiPenyakit[6]
-            return render_template("result.html", terjangkitPenyakit = terjangkitPenyakit, solusiPenyakitnya = solusiPenyakitnya, awal = url_for('index'))
-         if session['gejalaPasien'] == 29: # Gejala 7
-            terjangkitPenyakit = daftarPenyakit[9]
-            solusiPenyakitnya = "Solusi: " + solusiPenyakit[9]
-            return render_template("result.html", terjangkitPenyakit = terjangkitPenyakit, solusiPenyakitnya = solusiPenyakitnya, awal = url_for('index'))
-         if session['gejalaPasien'] == 7 and session['logs2'] == 1: # Gejala 2
-            session['gejalaPasien'] = 8
-            session['logs'] = 4
-            session['logs2'] = 1
-            return redirect(url_for('diagnosa'))
-         elif session['gejalaPasien'] == 17 and session['logs2'] == 1: # Gejala 5
-            terjangkitPenyakit = daftarPenyakit[4]
-            solusiPenyakitnya = "Solusi: " + solusiPenyakit[4]
-            return render_template("result.html", terjangkitPenyakit = terjangkitPenyakit, solusiPenyakitnya = solusiPenyakitnya, awal = url_for('index'))
-
-      #=============================================================Logs 4
-      elif session['logs'] == 4 and checkGejala():
-         if session['gejalaPasien'] == 5: # Gejala 1
-            session['gejalaPasien'] = 6
-            session['logs'] = 5
-            return redirect(url_for('diagnosa'))
-         if session['gejalaPasien'] == 23: # Gejala 8
-            session['gejalaPasien'] = 24
-            session['logs'] = 5
-            return redirect(url_for('diagnosa'))
-         if session['gejalaPasien'] == 13: # Gejala 3
-            terjangkitPenyakit = daftarPenyakit[2]
-            solusiPenyakitnya = "Solusi: " + solusiPenyakit[2]
-            return render_template("result.html", terjangkitPenyakit = terjangkitPenyakit, solusiPenyakitnya = solusiPenyakitnya, awal = url_for('index'))
-         if session['gejalaPasien'] == 42: # Gejala 9
-            terjangkitPenyakit = daftarPenyakit[8]
-            solusiPenyakitnya = "Solusi: " + solusiPenyakit[8]
-            return render_template("result.html", terjangkitPenyakit = terjangkitPenyakit, solusiPenyakitnya = solusiPenyakitnya, awal = url_for('index'))
-         if session['gejalaPasien'] == 33: # Gejala 11
-            session['gejalaPasien'] = 34
-            session['logs'] = 5
-            return redirect(url_for('diagnosa'))
-         if session['gejalaPasien'] == 43: # Gejala 12
-            terjangkitPenyakit = daftarPenyakit[11]
-            solusiPenyakitnya = "Solusi: " + solusiPenyakit[11]
-            return render_template("result.html", terjangkitPenyakit = terjangkitPenyakit, solusiPenyakitnya = solusiPenyakitnya, awal = url_for('index'))
-         if session['gejalaPasien'] == 41: # Gejala 13
-            terjangkitPenyakit = daftarPenyakit[12]
-            solusiPenyakitnya = "Solusi: " + solusiPenyakit[12]
-            return render_template("result.html", terjangkitPenyakit = terjangkitPenyakit, solusiPenyakitnya = solusiPenyakitnya, awal = url_for('index'))
-         if session['gejalaPasien'] == 8 and session['logs2'] == 1: # Gejala 2
-            session['gejalaPasien'] = 9
-            session['logs'] = 5
-            session['logs2'] = 1
-            return redirect(url_for('diagnosa'))
-
-      #=============================================================Logs 5
-      elif session['logs'] == 5 and checkGejala():
-         if session['gejalaPasien'] == 6: # Gejala 1
-            session['gejalaPasien'] = 17
-            session['logs'] = 6
-            return redirect(url_for('diagnosa'))
-         if session['gejalaPasien'] == 24: # Gejala 8
-            terjangkitPenyakit = daftarPenyakit[7]
-            solusiPenyakitnya = "Solusi: " + solusiPenyakit[7]
-            return render_template("result.html", terjangkitPenyakit = terjangkitPenyakit, solusiPenyakitnya = solusiPenyakitnya, awal = url_for('index'))
-         if session['gejalaPasien'] == 34: # Gejala 11
-            terjangkitPenyakit = daftarPenyakit[10]
-            solusiPenyakitnya = "Solusi: " + solusiPenyakit[10]
-            return render_template("result.html", terjangkitPenyakit = terjangkitPenyakit, solusiPenyakitnya = solusiPenyakitnya, awal = url_for('index'))
-         if session['gejalaPasien'] == 9 and session['logs2'] == 1: # Gejala 2
-            terjangkitPenyakit = daftarPenyakit[1]
-            solusiPenyakitnya = "Solusi: " + solusiPenyakit[1]
-            return render_template("result.html", terjangkitPenyakit = terjangkitPenyakit, solusiPenyakitnya = solusiPenyakitnya, awal = url_for('index'))
-
-      #=============================================================Logs 6
-      elif session['logs'] == 6 and checkGejala():
-         if session['gejalaPasien'] == 17: # Gejala 1
-            terjangkitPenyakit = daftarPenyakit[0]
-            solusiPenyakitnya = "Solusi: " + solusiPenyakit[0]
-            return render_template("result.html", terjangkitPenyakit = terjangkitPenyakit, solusiPenyakitnya = solusiPenyakitnya, awal = url_for('index'))
-
-      #=============================================================Logs 1      
-      else:
-         if session['gejalaPasien'] == 0: # Gejala 8
-            session['gejalaPasien'] = 5
-            session['logs'] = 1
-            session['logs2'] = 0
-            return redirect(url_for('diagnosa'))
-         elif session['gejalaPasien'] == 5: # Gejala 3
-            session['gejalaPasien'] = 10 
-            session['logs'] = 1
-            return redirect(url_for('diagnosa'))
-         elif session['gejalaPasien'] == 10: # Gejala 4
-            session['gejalaPasien'] = 13
-            session['logs'] = 1
-            return redirect(url_for('diagnosa'))
-         elif session['gejalaPasien'] == 13: # Gejala 9
-            session['gejalaPasien'] = 25
-            session['logs'] = 1
-            session['logs2'] = 0
-            return redirect(url_for('diagnosa'))
-         elif session['gejalaPasien'] == 25 and session['logs2'] == 0: # Gejala 11
-            session['gejalaPasien'] = 30
-            session['logs'] = 1
-            return redirect(url_for('diagnosa'))
-         elif session['gejalaPasien'] == 30: # Gejala 12
-            session['gejalaPasien'] = 35
-            session['logs'] = 1
-            return redirect(url_for('diagnosa'))
-         elif session['gejalaPasien'] == 35: # Gejala 13
-            session['gejalaPasien'] = 38
-            session['logs'] = 1
-            return redirect(url_for('diagnosa'))
-         elif session['gejalaPasien'] == 1: # Gejala 6
-            session['gejalaPasien'] = 18
-            session['logs'] = 1
-            return redirect(url_for('diagnosa'))
-         elif session['gejalaPasien'] == 18: # Gejala 7
-            session['gejalaPasien'] = 20
-            session['logs'] = 1
-            return redirect(url_for('diagnosa'))
-         elif session['gejalaPasien'] == 19: # Gejala 10
-            session['gejalaPasien'] = 25
-            session['logs'] = 1
-            session['logs2'] = 1
-            return redirect(url_for('diagnosa'))
-         elif session['gejalaPasien'] == 25 and session['logs2'] == 1: # Gejala 2
-            session['gejalaPasien'] = 4
-            session['logs'] = 1
-            session['logs2'] = 1
-            return redirect(url_for('diagnosa'))
-         elif session['gejalaPasien'] == 7 and session['logs2'] == 1: # Gejala 5
-            session['gejalaPasien'] = 5
-            session['logs'] = 1
-            session['logs2'] = 1
-            return redirect(url_for('diagnosa'))
-         elif session['gejalaPasien'] == 38: # Tidak ada gejala
-            terjangkitPenyakit = "Anda tidak terjangkit apapun"
-            return render_template("result.html", terjangkitPenyakit = terjangkitPenyakit, awal = url_for('index'))
-         else:
+        diagnosis = evaluate_gejala(session['logs'])
+        if diagnosis:
+            terjangkitPenyakit = daftarPenyakit[diagnosis]
+            solusi_id = rules[diagnosis]['solusi']
+            solusiPenyakitnya = "Solusi: " + solusiPenyakit[solusi_id]
+            return render_template("result.html", terjangkitPenyakit=terjangkitPenyakit, solusiPenyakitnya=solusiPenyakitnya, awal=url_for('index'))
+        
+        # Find the next gejala ID
+        current_index = list(daftarGejala.keys()).index(current_gejala)
+        next_index = current_index + 1
+        if next_index >= len(daftarGejala):
             terjangkitPenyakit = "Maaf Sistem kami belum bisa menjawab pertanyaan anda"
-            return render_template("result.html", terjangkitPenyakit = terjangkitPenyakit, awal = url_for('index'))
-         
+            return render_template("result.html", terjangkitPenyakit=terjangkitPenyakit, awal=url_for('index'))
+        
+        session['gejalaPasien'] = list(daftarGejala.keys())[next_index]
+        return redirect(url_for('diagnosa'))
 
-@app.route('/diagnosa',methods = ['POST', 'GET'])
+@app.route('/diagnosa', methods=['POST', 'GET'])
 def diagnosa():
-   name = session['namaPasien']
-   pertanyaan = daftarGejala[session['gejalaPasien']]
-   return render_template("diagnosa.html", pertanyaan = pertanyaan, name = name, link = url_for('index'))
-   
+    name = session['namaPasien']
+    pertanyaan = daftarGejala[session['gejalaPasien']]
+    return render_template("diagnosa.html", pertanyaan=pertanyaan, name=name, link=url_for('index'))
+
 if __name__ == '__main__':
-   app.run(debug = True)
+    app.run(debug=True)
+
+
+
+
+
+
+
+
+
+
+# from flask import Flask, session, redirect, url_for, render_template, request
+# from markupsafe import Markup
+
+# app = Flask(__name__)
+# app.secret_key = 'isinya password buat session'
+# app.static_folder = 'static'
+
+# daftarGejala = [
+#     'Mual pada perut ',
+#     'Nyeri di ulu hati ',
+#     'Perut kembung ',
+#     'Sendawa berlebih',
+#     'Sulit tidur ',
+#     'Anemia ',
+#     'BAB berwarna hitam',
+#     'Sering Cegukan ',
+#     'Sakit tenggorokan ',
+#     'Mudah merasa kenyang',
+#     'Kadar gula darah tidak terkontrol ',
+#     'Asam dan pahit pada mulut ',
+#     'Muntah darah ',
+#     'BAB Berdarah ',
+#     'Penurunan berat badan ',
+# ]
+
+# daftarPenyakit = [
+#     'Tukak Lambung (Ulkus Peptikum)',
+#     'Gastroparesis',
+#     'GERD (Gastroesophageal Reflux Disease)',
+#     'Gastritis ',
+#     'Kanker lambung ',
+# ]
+
+# solusiPenyakit = [
+#     'Hindari makanan pedas, asam, dan berlemak; berhenti merokok; hindari alkohol.',
+#     'Makan dalam porsi kecil dan sering; hindari makanan tinggi serat dan lemak; mengkonsumsi makanan lunak atau cair.',
+#     'Makan dalam porsi kecil dan sering; hindari makanan pedas, berlemak, dan asam; hindari makan sebelum tidur; Menurunkan berat badan jika kelebihan berat badan.',
+#     'Makan dalam porsi kecil dan sering; hindari makanan pedas, berlemak, dan asam; Mengelola stres dengan teknik relaksasi; hindari alkohol dan merokok.',
+#     'Operasi; kemoterapi; Dukungan nutrisi untuk menjaga berat badan dan kesehatan; konseling untuk dukungan emosional dan psikologis.',
+# ]
+
+# rules = {
+#     'A01': {'gejala': [0, 1, 2, 3]},
+#     'A02': {'gejala': [0, 1, 2, 9, 14]},
+#     'A03': {'gejala': [0, 2, 4, 8, 11]},
+#     'A04': {'gejala': [0, 1, 6, 7]},
+#     'A05': {'gejala': [1, 2, 5, 12, 13, 14]},
+# }
+
+# def checkGejala():
+#     pilihan = request.form.get('pilihan')
+#     if pilihan == 'ya':
+#         return True
+#     elif pilihan == 'tidak':
+#         return False
+#     else:
+#         return None
+
+# def evaluate_gejala(gejala_list):
+#     for diagnosis, rule in rules.items():
+#         if all(gejala in gejala_list for gejala in rule['gejala']):
+#             return diagnosis
+#     return None
+
+# @app.route('/')
+# def index():
+#     session.clear()
+#     session['gejalaPasien'] = 0
+#     session['logs'] = []
+#     return render_template('index.html', link=url_for('index'))
+
+# @app.route('/welcome', methods=['POST', 'GET'])
+# def welcome():
+#     if request.method == 'POST':
+#         name = request.form.get('Name')
+#         session['namaPasien'] = name
+#         gejalanya = session['gejalaPasien']
+#         pertanyaan = daftarGejala[gejalanya]
+#         return render_template("welcome.html", name=name, pertanyaan=pertanyaan, link=url_for('index'))
+
+# @app.route('/result', methods=['POST', 'GET'])
+# def result():
+#     if request.method == 'POST':
+#         gejala_terjadi = checkGejala()
+
+#         if gejala_terjadi is None:
+#             return redirect(url_for('diagnosa'))
+
+#         current_gejala = session['gejalaPasien']
+#         if gejala_terjadi:
+#             session['logs'].append(current_gejala)
+
+#         diagnosis = evaluate_gejala(session['logs'])
+#         if diagnosis:
+#             penyakit_index = list(rules.keys()).index(diagnosis)
+#             terjangkitPenyakit = daftarPenyakit[penyakit_index]
+#             solusiPenyakitnya = "Solusi: " + solusiPenyakit[penyakit_index]
+#             return render_template("result.html", terjangkitPenyakit=terjangkitPenyakit, solusiPenyakitnya=solusiPenyakitnya, awal=url_for('index'))
+        
+#         session['gejalaPasien'] += 1
+#         if session['gejalaPasien'] >= len(daftarGejala):
+#             terjangkitPenyakit = "Maaf Sistem kami belum bisa menjawab pertanyaan anda"
+#             return render_template("result.html", terjangkitPenyakit=terjangkitPenyakit, awal=url_for('index'))
+        
+#         return redirect(url_for('diagnosa'))
+
+# @app.route('/diagnosa', methods=['POST', 'GET'])
+# def diagnosa():
+#     name = session['namaPasien']
+#     pertanyaan = daftarGejala[session['gejalaPasien']]
+#     return render_template("diagnosa.html", pertanyaan=pertanyaan, name=name, link=url_for('index'))
+
+# if __name__ == '__main__':
+#     app.run(debug=True)
+
+
+
+
+
+
+
+
+
+
+# from flask import Flask, session, redirect, url_for, render_template, request
+# from markupsafe import Markup
+
+# app = Flask(__name__)
+# app.secret_key = 'isinya password buat session'
+# app.static_folder = 'static'
+
+# daftarGejala = [
+#     'Mual pada perut ',
+#     'Nyeri di ulu hati ',
+#     'Perut kembung ',
+#     'Sendawa berlebih',
+#     'Sulit tidur ',
+#     'Anemia ',
+#     'BAB berwarna hitam',
+#     'Sering Cegukan ',
+#     'Sakit tenggorokan ',
+#     'Mudah merasa kenyang',
+#     'Kadar gula darah tidak terkontrol ',
+#     'Asam dan pahit pada mulut ',
+#     'Muntah darah ',
+#     'BAB Berdarah ',
+#     'Penurunan berat badan ',
+# ]
+
+# daftarPenyakit = [
+#     'Tukak Lambung (Ulkus Peptikum)',
+#     'Gastroparesis',
+#     'GERD (Gastroesophageal Reflux Disease)',
+#     'Gastritis ',
+#     'Kanker lambung ',
+# ]
+
+# solusiPenyakit = [
+#     'Hindari makanan pedas, asam, dan berlemak; berhenti merokok; hindari alkohol.',
+#     'Makan dalam porsi kecil dan sering; hindari makanan tinggi serat dan lemak; mengkonsumsi makanan lunak atau cair.',
+#     'Makan dalam porsi kecil dan sering; hindari makanan pedas, berlemak, dan asam; hindari makan sebelum tidur; Menurunkan berat badan jika kelebihan berat badan.',
+#     'Makan dalam porsi kecil dan sering; hindari makanan pedas, berlemak, dan asam; Mengelola stres dengan teknik relaksasi; hindari alkohol dan merokok.',
+#     'Operasi; kemoterapi; Dukungan nutrisi untuk menjaga berat badan dan kesehatan; konseling untuk dukungan emosional dan psikologis.',
+# ]
+
+# def checkGejala():
+#     pilihan = request.form.get('pilihan')
+#     if pilihan == 'ya':
+#         return True
+#     elif pilihan == 'tidak':
+#         return False
+#     else:
+#         return None
+
+# @app.route('/')
+# def index():
+#     session.pop('namaPasien', None)
+#     session.pop('gejalaPasien', None)
+#     session.pop('logs', None)
+#     session.pop('logs2', None)
+#     session['gejalaPasien'] = 0
+#     session['logs'] = 0
+#     session['logs2'] = 0
+#     return render_template('index.html', link=url_for('index'))
+
+# @app.route('/welcome', methods=['POST', 'GET'])
+# def welcome():
+#     if request.method == 'POST':
+#         name = request.form.get('Name')
+#         session['namaPasien'] = name
+#         gejalanya = session['gejalaPasien']
+#         pertanyaan = daftarGejala[gejalanya]
+#         return render_template("welcome.html", name=name, pertanyaan=pertanyaan, link=url_for('index'))
+
+# @app.route('/result', methods=['POST', 'GET'])
+# def result():
+#     if request.method == 'POST':
+#         gejala_terjadi = checkGejala()
+
+#         if gejala_terjadi is None:
+#             return redirect(url_for('diagnosa'))
+
+#         #=============================================================Logs 0
+#         if session['logs'] == 0 and gejala_terjadi:
+#             if session['gejalaPasien'] == 0:  # penyakit 1, penyakit 4, penyakit 2, penyakit 3
+#                 session['gejalaPasien'] = 1
+#                 session['logs'] = 1
+#                 return redirect(url_for('diagnosa'))
+#             elif session['gejalaPasien'] == 1:  # penyakit 5
+#                 session['gejalaPasien'] = 2
+#                 session['logs'] = 1
+#                 return redirect(url_for('diagnosa'))
+
+#         #=============================================================Logs 1
+#         elif session['logs'] == 1 and gejala_terjadi:
+#             if session['gejalaPasien'] == 1:  # penyakit 1, penyakit 4, penyakit 2
+#                 session['gejalaPasien'] = 2
+#                 session['logs'] = 2
+#                 return redirect(url_for('diagnosa'))
+#             elif session['gejalaPasien'] == 2:  # penyakit 5
+#                 session['gejalaPasien'] = 5
+#                 session['logs'] = 2
+#                 return redirect(url_for('diagnosa'))
+
+#         #=============================================================Logs 2
+#         elif session['logs'] == 2 and gejala_terjadi:
+#             if session['gejalaPasien'] == 2:  # penyakit 1, penyakit 2
+#                 session['gejalaPasien'] = 3
+#                 session['logs'] = 3
+#                 return redirect(url_for('diagnosa'))
+#             elif session['gejalaPasien'] == 6:  # penyakit 4
+#                 session['gejalaPasien'] = 7
+#                 session['logs'] = 3
+#                 return redirect(url_for('diagnosa'))
+#             elif session['gejalaPasien'] == 5:  # penyakit 5
+#                 session['gejalaPasien'] = 12
+#                 session['logs'] = 3
+#                 return redirect(url_for('diagnosa'))
+#             elif session['gejalaPasien'] == 10:  # penyakit 3
+#                 session['gejalaPasien'] = 11
+#                 session['logs'] = 3
+#                 return redirect(url_for('diagnosa'))
+
+#         #=============================================================Logs 3
+#         elif session['logs'] == 3 and gejala_terjadi:
+#             if session['gejalaPasien'] == 7:  # penyakit 4
+#                 terjangkitPenyakit = daftarPenyakit[3]
+#                 solusiPenyakitnya = "Solusi: " + solusiPenyakit[3]
+#                 return render_template("result.html", terjangkitPenyakit=terjangkitPenyakit, solusiPenyakitnya=solusiPenyakitnya, awal=url_for('index'))
+#             if session['gejalaPasien'] == 3:  # penyakit 1
+#                 terjangkitPenyakit = daftarPenyakit[0]
+#                 solusiPenyakitnya = "Solusi: " + solusiPenyakit[0]
+#                 return render_template("result.html", terjangkitPenyakit=terjangkitPenyakit, solusiPenyakitnya=solusiPenyakitnya, awal=url_for('index'))
+#             if session['gejalaPasien'] == 12:  # penyakit 5
+#                 session['gejalaPasien'] = 13
+#                 session['logs'] = 4
+#                 return redirect(url_for('diagnosa'))
+#             if session['gejalaPasien'] == 11:  # penyakit 3
+#                 terjangkitPenyakit = daftarPenyakit[2]
+#                 solusiPenyakitnya = "Solusi: " + solusiPenyakit[2]
+#                 return render_template("result.html", terjangkitPenyakit=terjangkitPenyakit, solusiPenyakitnya=solusiPenyakitnya, awal=url_for('index'))
+
+#         #=============================================================Logs 4
+#         elif session['logs'] == 4 and gejala_terjadi:
+#             if session['gejalaPasien'] == 14:  # penyakit 2
+#                 terjangkitPenyakit = daftarPenyakit[1]
+#                 solusiPenyakitnya = "Solusi: " + solusiPenyakit[1]
+#                 return render_template("result.html", terjangkitPenyakit=terjangkitPenyakit, solusiPenyakitnya=solusiPenyakitnya, awal=url_for('index'))
+#             if session['gejalaPasien'] == 13:  # penyakit 5
+#                 session['gejalaPasien'] = 14
+#                 session['logs'] = 5
+#                 return redirect(url_for('diagnosa'))
+
+#         #=============================================================Logs 5
+#         elif session['logs'] == 5 and gejala_terjadi:
+#             if session['gejalaPasien'] == 14:  # penyakit 5
+#                 terjangkitPenyakit = daftarPenyakit[4]
+#                 solusiPenyakitnya = "Solusi: " + solusiPenyakit[4]
+#                 return render_template("result.html", terjangkitPenyakit=terjangkitPenyakit, solusiPenyakitnya=solusiPenyakitnya, awal=url_for('index'))
+
+#         #=============================================================Logs 1
+#         else:
+#             terjangkitPenyakit = "Maaf Sistem kami belum bisa menjawab pertanyaan anda"
+#             return render_template("result.html", terjangkitPenyakit=terjangkitPenyakit, awal=url_for('index'))
+
+# @app.route('/diagnosa', methods=['POST', 'GET'])
+# def diagnosa():
+#     name = session['namaPasien']
+#     pertanyaan = daftarGejala[session['gejalaPasien']]
+#     return render_template("diagnosa.html", pertanyaan=pertanyaan, name=name, link=url_for('index'))
+
+# if __name__ == '__main__':
+#     app.run(debug=True)
