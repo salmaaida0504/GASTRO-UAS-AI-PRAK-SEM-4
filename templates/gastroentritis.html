@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!--========== FAVICON ==========-->
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" />
+
+    <!--========== BOX ICONS ==========-->
+    <link
+      href="https://cdn.jsdelivr.net/npm/boxicons@2.0.5/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+
+    <!--========== CSS ==========-->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+
+    <title>GASTRO - Sistem Pakar Diagnosis Penyakit Lambung</title>
+  </head>
+  <body>
+    <!--========== SCROLL TOP ==========-->
+    <a href="#" class="scrolltop" id="scroll-top">
+      <i class="bx bx-chevron-up scrolltop__icon"></i>
+    </a>
+
+    <!--========== HEADER ==========-->
+    <header class="l-header" id="header">
+      <nav class="nav bd-container">
+        <a href="{{ url_for('index') }}" class="nav__logo"
+          >Sistem Pakar <span style="font-style: italic">GASTRO</span></a
+        >
+
+        <div class="nav__menu" id="nav-menu">
+          <ul class="nav__list">
+            <li class="nav__item">
+              <a
+                href="{{ url_for('index') }}#home"
+                class="nav__link active-link"
+                >Home</a
+              >
+            </li>
+            <li class="nav__item">
+              <a href="{{ url_for('index') }}#about" class="nav__link">About</a>
+            </li>
+            <li class="nav__item">
+              <a href="{{ url_for('index') }}#services" class="nav__link"
+                >Jenis Penyakit</a
+              >
+            </li>
+          </ul>
+        </div>
+
+        <div class="nav__toggle" id="nav-toggle">
+          <i class="bx bx-menu"></i>
+        </div>
+      </nav>
+    </header>
+
+    <main class="l-main">
+      <section
+        class="tukak-lambung section"
+        id="tukak-lambung"
+        style="margin-top: 50px"
+      >
+        <div class="content">
+          <h2>Gastroenteritis</h2>
+          <img
+            src="{{ url_for('static', filename='img/gastroenteritis.jpg') }}"
+            alt="Gastroparesis"
+          />
+          <p class="subtitle">
+            Gastroenteritis adalah infeksi atau iritasi pada lambung dan usus
+            yang sering kali disebabkan oleh virus, bakteri, atau parasit.
+            Kondisi ini dikenal juga dengan sebutan "flu perut" dan dapat
+            menyebabkan diare, muntah, dan kram perut.
+          </p>
+          <div class="accordion">
+            <div class="accordion-item">
+              <h3>
+                Gejala
+                <i id="accordion" class="bx bx-chevron-down accordion-icon"></i>
+              </h3>
+              <p>
+                Gejala utama gastroenteritis meliputi diare berair, mual,
+                muntah, kram perut, dan kadang-kadang demam. Dehidrasi adalah
+                komplikasi serius yang bisa terjadi, terutama pada anak-anak dan
+                orang tua. Gejala biasanya muncul dalam waktu beberapa jam
+                hingga beberapa hari setelah terpapar dan bisa berlangsung dari
+                satu hingga sepuluh hari.
+              </p>
+            </div>
+            <div class="accordion-item">
+              <h3>
+                Penyebab
+                <i id="accordion" class="bx bx-chevron-down accordion-icon"></i>
+              </h3>
+              <p>
+                Penyebab umum gastroenteritis termasuk infeksi virus seperti
+                rotavirus dan norovirus, bakteri seperti Escherichia coli (E.
+                coli) dan Salmonella, serta parasit seperti Giardia.
+                Penyebarannya dapat terjadi melalui makanan atau air yang
+                terkontaminasi, atau kontak langsung dengan orang yang
+                terinfeksi.
+              </p>
+            </div>
+            <div class="accordion-item">
+              <h3>
+                Diagnosis
+                <i id="accordion" class="bx bx-chevron-down accordion-icon"></i>
+              </h3>
+              <p>
+                Diagnosis gastroenteritis biasanya didasarkan pada gejala dan
+                riwayat kontak dengan sumber infeksi. Tes laboratorium seperti
+                pemeriksaan tinja dapat dilakukan untuk mengidentifikasi
+                organisme penyebabnya, terutama jika gejalanya parah atau
+                berlangsung lama.
+              </p>
+            </div>
+            <div class="accordion-item">
+              <h3>
+                Pengobatan
+                <i id="accordion" class="bx bx-chevron-down accordion-icon"></i>
+              </h3>
+              <p>
+                Pengobatan gastroenteritis terutama berfokus pada pencegahan
+                dehidrasi dengan memberikan banyak cairan. Dalam kasus infeksi
+                bakteri, dokter mungkin meresepkan antibiotik. Rehidrasi oral
+                dengan larutan elektrolit sering kali direkomendasikan, dan
+                dalam kasus yang parah, perawatan rumah sakit mungkin diperlukan
+                untuk pemberian cairan melalui infus. Pencegahan termasuk
+                praktik kebersihan yang baik dan memastikan makanan dimasak dan
+                disimpan dengan benar.
+              </p>
+            </div>
+          </div>
+          <a href="{{ url_for('index') }}" class="button"
+            >Kembali ke Homepage</a
+          >
+        </div>
+      </section>
+    </main>
+
+    <!--========== FOOTER ==========-->
+    <footer class="footer section bd-container">
+      <div class="footer__container bd-grid">
+        <div class="footer__content">
+          <a href="#" class="footer__logo">GASTRO</a>
+          <span class="footer__description">Expert System</span>
+          <div>
+            <a href="#" class="footer__social"
+              ><i class="bx bxl-facebook"></i
+            ></a>
+            <a href="#" class="footer__social"
+              ><i class="bx bxl-instagram"></i
+            ></a>
+            <a href="#" class="footer__social"
+              ><i class="bx bxl-twitter"></i
+            ></a>
+          </div>
+        </div>
+
+        <div class="footer__content">
+          <h3 class="footer__title">Services</h3>
+          <ul>
+            <li>
+              <a href="{{ url_for('index') }}#home" class="footer__link"
+                >Home</a
+              >
+            </li>
+            <li>
+              <a href="{{ url_for('index') }}#about" class="footer__link"
+                >About</a
+              >
+            </li>
+            <li>
+              <a href="{{ url_for('index') }}#services" class="footer__link"
+                >Jenis Penyakit</a
+              >
+            </li>
+          </ul>
+        </div>
+
+        <div class="footer__content">
+          <h3 class="footer__title">Adress</h3>
+          <ul>
+            <li>Universitas Airlangga Surabaya</li>
+            <li>Jl. Airlangga No 4-6, Surabaya</li>
+            <li>vokasi.unair.ac.id</li>
+          </ul>
+        </div>
+      </div>
+
+      <p class="footer__copy">
+        &#169; 2024 Kecerdasan Buatan Praktikum Kel 8. All right reserved
+      </p>
+    </footer>
+
+    <!--========== SCROLL REVEAL ==========-->
+    <script src="https://unpkg.com/scrollreveal"></script>
+
+    <!--========== MAIN JS ==========-->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+    <script>
+      // Script for accordion functionality
+      document
+        .querySelectorAll(".accordion-item h3")
+        .forEach((accordionHeader) => {
+          accordionHeader.addEventListener("click", () => {
+            const content = accordionHeader.nextElementSibling;
+            content.style.display =
+              content.style.display === "block" ? "none" : "block";
+          });
+        });
+    </script>
+  </body>
+</html>

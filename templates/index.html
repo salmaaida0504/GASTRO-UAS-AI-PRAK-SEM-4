@@ -1,32 +1,312 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-	<title>Sistem Pakar Diagnosa Penyakit Gigi dan Mulut</title>
-	<!-- Google font -->
-	<link href="https://fonts.googleapis.com/css?family=Fredoka+One" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet">
-	<!-- Custom stlylesheet -->
-   <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='main.css') }}" />
-   
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-</head>
-<body>
-	<div id="notfound">
-		<div class="notfound">
-			<div class="notfound-404">
-				<h1>Selamat Datang</h1>
-			</div>
-			<h2>Silahkan masukkan nama anda</h2>
-			<form action = "{{ link }}welcome" method = "POST" class="notfound-searching">
-				<input type="text" name = "Name" placeholder="Nama Anda" class="input-nama">
-				<button type="submit">Mulai</button>
-			</form>
-			<!-- <a href="#"><span class="arrow"></span>Return To Homepage</a> -->
-		</div>
-	</div>
-</body><!-- This templates was made by Colorlib (https://colorlib.com) -->
+    <!--========== FAVICON ==========-->
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" />
+
+    <!--========== BOX ICONS ==========-->
+    <link
+      href="https://cdn.jsdelivr.net/npm/boxicons@2.0.5/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+
+    <!--========== CSS ==========-->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+
+    <title>GASTRO - Sistem Pakar Diagnosis Penyakit Lambung</title>
+  </head>
+  <body>
+    <!--========== SCROLL TOP ==========-->
+    <a href="#" class="scrolltop" id="scroll-top">
+      <i class="bx bx-chevron-up scrolltop__icon"></i>
+    </a>
+
+    <!--========== HEADER ==========-->
+    <header class="l-header" id="header">
+      <nav class="nav bd-container">
+        <a href="{{ url_for('index') }}" class="nav__logo"
+          >Sistem Pakar <span style="font-style: italic">GASTRO</span></a
+        >
+
+        <div class="nav__menu" id="nav-menu">
+          <ul class="nav__list">
+            <li class="nav__item">
+              <a href="#home" class="nav__link active-link">Home</a>
+            </li>
+            <li class="nav__item">
+              <a href="#about" class="nav__link">About</a>
+            </li>
+            <li class="nav__item">
+              <a href="#services" class="nav__link">Jenis Penyakit</a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="nav__toggle" id="nav-toggle">
+          <i class="bx bx-menu"></i>
+        </div>
+      </nav>
+    </header>
+
+    <main class="l-main">
+      <!--========== HOME ==========-->
+      <section class="home" id="home">
+        <div class="home__container bd-container bd-grid">
+          <div class="home__data">
+            <h1 class="home__title">GASTRO</h1>
+            <h2 class="home__subtitle">
+              Sistem Pakar Diagnosis <br />
+              Penyakit Lambung.
+            </h2>
+            <a
+              id="diagnosisButton"
+              data-url="{{ url_for('identitas') }}"
+              class="button"
+              >Lakukan Diagnosa</a
+            >
+          </div>
+
+          <img
+            src="{{ url_for('static', filename='img/home.png') }}"
+            alt=""
+            class="home__img"
+          />
+        </div>
+      </section>
+
+      <!--========== ABOUT ==========-->
+      <section class="about section bd-container" id="about">
+        <div class="about__container bd-grid">
+          <div class="about__data">
+            <span class="section-subtitle about__initial">About us</span>
+            <h2 class="section-title about__initial">
+              Welcome to GASTRO Expert System,
+            </h2>
+            <p class="about__description">
+              GASTRO Merupakan sistem informasi berbasis Web Based yang
+              memanfaatkan teknologi Sistem Pakar didalamnya. Dengan menggunakan
+              teknologi sistem pakar pengguna dapat mengenali atau melakukan
+              diagnosa keluhan penyakit lambung hanya dengan menjawab pertanyaan
+              yang diberikan oleh sistem. Setelah itu pengguna dapat melihat
+              hasil tes diagnosa yang juga terdapat solusi dari diagnosa
+              penyakit tersebut.
+            </p>
+          </div>
+
+          <img
+            src="{{ url_for('static', filename='img/about.jpg') }}"
+            alt=""
+            class="about__img"
+          />
+        </div>
+      </section>
+
+      <!--========== SERVICES ==========-->
+      <section class="services section bd-container" id="services">
+        <h2 class="section-title">Jenis Penyakit</h2>
+
+        <div class="services__container bd-grid">
+          <!-- PENYAKIT 1 -->
+          <div class="services__content">
+            <img
+              src="{{ url_for('static', filename='img/num-1.png') }}"
+              alt=""
+              class="services__img"
+            />
+            <h3 class="services__title">Tukak Lambung</h3>
+            <p class="services__description">
+              Luka pada lambung yang menyebabkan keluhan sakit maag, seperti
+              nyeri ulu hati, kembung, dan mual.
+            </p>
+            <button class="services__button">
+              <a href="{{ url_for('tukak_lambung') }}">Lihat Detail Penyakit</a>
+            </button>
+          </div>
+
+          <!-- PENYAKIT 2 -->
+          <div class="services__content">
+            <img
+              src="{{ url_for('static', filename='img/num-2.png') }}"
+              alt=""
+              class="services__img"
+            />
+            <h3 class="services__title">Gastroparesis</h3>
+            <p class="services__description">
+              Gangguan pada otot lambung yang menyebabkan gerakan lambung untuk
+              mendorong makanan ke usus menjadi lambat.
+            </p>
+            <button class="services__button">
+              <a href="{{ url_for('gastroparesis') }}">Lihat Detail Penyakit</a>
+            </button>
+          </div>
+
+          <!-- PENYAKIT 3 -->
+          <div class="services__content">
+            <img
+              src="{{ url_for('static', filename='img/num-3.png') }}"
+              alt=""
+              class="services__img"
+            />
+            <h3 class="services__title">Gerd</h3>
+            <p class="services__description">
+              Kondisi ketika asam lambung naik hingga ke esofagus atau
+              kerongkongan.
+            </p>
+            <button class="services__button">
+              <a href="{{ url_for('gerd') }}">Lihat Detail Penyakit</a>
+            </button>
+          </div>
+
+          <!-- PENYAKIT 4 -->
+          <div class="services__content">
+            <img
+              src="{{ url_for('static', filename='img/num-4.png') }}"
+              alt=""
+              class="services__img"
+            />
+            <h3 class="services__title">Gastritis</h3>
+            <p class="services__description">
+              Peradangan pada dinding lambung yang ditandai dengan nyeri di ulu
+              hati atau lambung.
+            </p>
+            <button class="services__button">
+              <a href="{{ url_for('gastritis') }}">Lihat Detail Penyakit</a>
+            </button>
+          </div>
+
+          <!-- PENYAKIT 5 -->
+          <div class="services__content">
+            <img
+              src="{{ url_for('static', filename='img/num-5.png') }}"
+              alt=""
+              class="services__img"
+            />
+            <h3 class="services__title">Kanker Lambung</h3>
+            <p class="services__description">
+              Kanker yang terjadi akibat pertumbuhan sel di lambung yang tidak
+              normal atau tidak terkendali.
+            </p>
+            <button class="services__button">
+              <a href="{{ url_for('kanker_lambung') }}"
+                >Lihat Detail Penyakit</a
+              >
+            </button>
+          </div>
+
+          <!-- PENYAKIT 6 -->
+          <div class="services__content">
+            <img
+              src="{{ url_for('static', filename='img/num-6.png') }}"
+              alt=""
+              class="services__img"
+            />
+            <h3 class="services__title">Sindrom Dispepsia</h3>
+            <p class="services__description">
+              Rasa tidak nyaman pada perut, seperti perut terasa penuh, kembung,
+              sakit perut, dan nyeri ulu hati.
+            </p>
+            <button class="services__button">
+              <a href="{{ url_for('sindrom_dispepsia') }}"
+                >Lihat Detail Penyakit</a
+              >
+            </button>
+          </div>
+
+          <!-- PENYAKIT 7 -->
+          <div class="services__content">
+            <img
+              src="{{ url_for('static', filename='img/num-7.png') }}"
+              alt=""
+              class="services__img"
+            />
+            <h3 class="services__title">Maag</h3>
+            <p class="services__description">
+              Rasa tidak nyaman di perut, seperti perut terasa penuh, rasa panas
+              di perut bagian atas, serta perut kembung.
+            </p>
+            <button class="services__button">
+              <a href="{{ url_for('maag') }}">Lihat Detail Penyakit</a>
+            </button>
+          </div>
+
+          <!-- PENYAKIT 8 -->
+          <div class="services__content">
+            <img
+              src="{{ url_for('static', filename='img/num-8.png') }}"
+              alt=""
+              class="services__img"
+            />
+            <h3 class="services__title">Gastroenteritis</h3>
+            <p class="services__description">
+              Infeksi dan peradangan pada sistem pencernaan yang ditandai dengan
+              beberapa keluhan, seperti muntah, kram perut, dan diare.
+            </p>
+            <button class="services__button">
+              <a href="{{ url_for('gastroentritis') }}"
+                >Lihat Detail Penyakit</a
+              >
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!--========== FOOTER ==========-->
+    <footer class="footer section bd-container">
+      <div class="footer__container bd-grid">
+        <div class="footer__content">
+          <a href="{{ url_for('index') }}" class="footer__logo">GASTRO</a>
+          <span class="footer__description">Expert System</span>
+          <div>
+            <a href="#" class="footer__social"
+              ><i class="bx bxl-facebook"></i
+            ></a>
+            <a href="#" class="footer__social"
+              ><i class="bx bxl-instagram"></i
+            ></a>
+            <a href="#" class="footer__social"
+              ><i class="bx bxl-twitter"></i
+            ></a>
+          </div>
+        </div>
+
+        <div class="footer__content">
+          <h3 class="footer__title">Services</h3>
+          <ul>
+            <li><a href="#home" class="footer__link">Home</a></li>
+            <li><a href="#about" class="footer__link">About</a></li>
+            <li><a href="#services" class="footer__link">Jenis Penyakit</a></li>
+          </ul>
+        </div>
+
+        <div class="footer__content">
+          <h3 class="footer__title">Address</h3>
+          <ul>
+            <li>Universitas Airlangga Surabaya</li>
+            <li>Jl. Airlangga No 4-6, Surabaya</li>
+            <li>vokasi.unair.ac.id</li>
+          </ul>
+        </div>
+      </div>
+
+      <p class="footer__copy">
+        &#169; 2024 Kecerdasan Buatan Praktikum Kel 8. All right reserved
+      </p>
+    </footer>
+
+    <!--========== SCROLL REVEAL ==========-->
+    <script src="https://unpkg.com/scrollreveal"></script>
+
+    <!--========== MAIN JS ==========-->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+    <!--========== SWEETALERT ==========-->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </body>
 </html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" />
+
+    <!--========== BOX ICONS ==========-->
+    <link
+      href="https://cdn.jsdelivr.net/npm/boxicons@2.0.5/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+
+    <!--========== BOOTSTRAP ==========-->
+    <!-- <link
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    /> -->
+
+    <!--========== CSS ==========-->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+
+    <title>GASTRO - Sistem Pakar Diagnosis Penyakit Lambung</title>
+  </head>
+  <body style="background-color: #ff6969">
+    <div class="container">
+      <!-- Modal -->
+      <div
+        class="modal fade"
+        id="hasilModal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="hasilModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="hasilModalLabel">Hasil Diagnosa Pasien</h5>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+                onclick="redirectToIndex()"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p style="margin-bottom: 20px;">
+                <strong>Penyakit yang terdiagnosa:</strong> {{
+                terjangkitPenyakit }}
+              </p>
+              {% if solusiPenyakitnya %}
+              <p><strong>Solusi:</strong> {{ solusiPenyakitnya }}</p>
+              {% endif %}
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary btn-close"
+                data-dismiss="modal"
+                onclick="redirectToIndex()"
+              >
+                Selesai
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+    <!-- Custom JavaScript -->
+    <script>
+      $(document).ready(function () {
+        // Show the modal when the document is ready
+        $("#hasilModal").modal("show");
+      });
+
+      // Function to redirect to index page
+      function redirectToIndex() {
+        window.location.href = "{{ url_for('index') }}";
+      }
+    </script>
+  </body>
+</html>

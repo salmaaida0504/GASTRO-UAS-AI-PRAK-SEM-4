@@ -1,60 +1,73 @@
 from flask import Flask, session, redirect, url_for, render_template, request
 from markupsafe import Markup
 
-app = Flask(__name__)
-app.secret_key = 'isinya password buat session'
-app.static_folder = 'static'
+app = Flask(__name__, static_folder='static')
+app.secret_key = '850457ba6a2f8a18beec9463f57515bd'
 
 daftarGejala = {
-    'G01': 'Mual pada perut ',
-    'G02': 'Nyeri di ulu hati ',
-    'G03': 'Perut kembung ',
+    'G01': 'Mual pada perut',
+    'G02': 'Nyeri di ulu hati',
+    'G03': 'Perut kembung',
     'G04': 'Sendawa berlebih',
-    'G05': 'Sulit tidur ',
-    'G06': 'Anemia ',
+    'G05': 'Sulit tidur',
+    'G06': 'Anemia',
     'G07': 'BAB berwarna hitam',
-    'G08': 'Sering Cegukan ',
-    'G09': 'Sakit tenggorokan ',
+    'G08': 'Sering Cegukan',
+    'G09': 'Sakit tenggorokan',
     'G10': 'Mudah merasa kenyang',
-    'G11': 'Kadar gula darah tidak terkontrol ',
-    'G12': 'Asam dan pahit pada mulut ',
-    'G13': 'Muntah darah ',
-    'G14': 'BAB Berdarah ',
-    'G15': 'Penurunan berat badan ',
+    'G11': 'Kadar gula darah tidak terkontrol',
+    'G12': 'Asam dan pahit pada mulut',
+    'G13': 'Muntah darah',
+    'G14': 'BAB Berdarah',
+    'G15': 'Penurunan berat badan',
+    'G16': 'Diare Kronis',
+    'G17': 'Kelelahan / Lemas',
+    'G18': 'Nyeri atau Ketidaknyamanan di Perut Bagian Atas',
+    'G19': 'Dada terasa seperti terbakar',
+    'G20': 'Sulit menarik napas',
+    'G21': 'Muntah',
+    'G22': 'Sakit perut',
+    'G23': 'Bau mulut',
+    'G24': 'Suara serak',
+    'G25': 'Tidak bisa menghabiskan makanan dalam porsi banyak',
+    'G26': 'Demam',
+    'G27': 'Sakit kepala',
+    'G28': 'Nyeri otot dan sendi',
+    'G29': 'Tidak nafsu makan'
 }
 
 daftarPenyakit = {
-    'A01': 'Tukak Lambung (Ulkus Peptikum)',
+    'A01': 'Tukak Lambung',
     'A02': 'Gastroparesis',
     'A03': 'GERD (Gastroesophageal Reflux Disease)',
     'A04': 'Gastritis',
     'A05': 'Kanker lambung',
+    'A06': 'Sindrom Dispepsia',
+    'A07': 'Maag',
+    'A08': 'Gastroentritis',
 }
 
 solusiPenyakit = {
-    'S01': 'Hindari makanan pedas, asam, dan berlemak; berhenti merokok; hindari alkohol.',
-    'S02': 'Makan dalam porsi kecil dan sering; hindari makanan tinggi serat dan lemak; mengkonsumsi makanan lunak atau cair.',
-    'S03': 'Makan dalam porsi kecil dan sering; hindari makanan pedas, berlemak, dan asam; hindari makan sebelum tidur; Menurunkan berat badan jika kelebihan berat badan.',
-    'S04': 'Makan dalam porsi kecil dan sering; hindari makanan pedas, berlemak, dan asam; Mengelola stres dengan teknik relaksasi; hindari alkohol dan merokok.',
-    'S05': 'Operasi; kemoterapi; Dukungan nutrisi untuk menjaga berat badan dan kesehatan; konseling untuk dukungan emosional dan psikologis.',
+    'S01': 'Memperbanyak konsumsi sayur, biji-bijian, dan buah yang mengandung vitamin A dan C; Mengonsumsi makanan yang mengandung probiotik; Hindari makanan pedas, asam, dan berlemak; Berhenti merokok; Hindari alkohol; Mengelola stress dengan baik; Istirahat yang cukup.',
+    'S02': 'Makan dalam porsi kecil dan sering; Hindari makanan tinggi serat dan lemak; Mengkonsumsi makanan lunak atau cair; Mengunyah makanan hingga halus; Mengonsumsi minuman dengan kandungan gula dan garam yang cukup; Tidak mengonsumsi minuman bersoda; Tidak merokok; Tidak langsung berbaring hingga 2 jam setelah makan.',
+    'S03': 'Makan dalam porsi kecil dan sering; hindari makanan pedas, berlemak, dan asam; Hindari makan sebelum tidur; Menurunkan berat badan jika kelebihan berat badan; Menghindari penggunaan pakaian ketat; Tidak merokok; Tidak mengonsumsi minuman alkohol; Tidur dengan posisi menyamping ke kiri atau menggunakan bantal tambahan; Mengonsumsi obat antasida.',
+    'S04': 'Menjaga kehigienisan lingkungan dan makanan yang dikonsumsi; Makan dalam porsi kecil dan sering; Hindari makanan pedas, berlemak, dan asam; Tidak berbaring setelah makan, minimal tunggu 2-3 jam setelah makan; Mengelola stres dengan teknik relaksasi; Hindari alkohol dan merokok; Menghindari konsumsi obat pereda nyeri tanpa resep dokter.',
+    'S05': 'Operasi; Kemoterapi; Dukungan nutrisi untuk menjaga berat badan dan kesehatan; Konseling untuk dukungan emosional dan psikologis; Radioterapi; Terapi target.',
+    'S06': 'Mengonsumsi antasida; Penghambat pompa proton (PPI) atau H2-receptor antagonists; Menghindari makanan pemicu gejala seperti makanan berlemak, pedas, atau asam; Mengurangi stress atau kecemasan',
+    'S07': 'Kurangi makanan berlemak dan pedas; Kurangi konsumsi minuman beralkohol dan berkafein, Tidur setidaknya selama 7 jam setiap malam; Berolahraga secara teratur dan berhenti merokok.',
+    'S08': 'memperbanyak minum air putih dan mengonsumsi makanan bernutrisi; dianjurkan untuk makan dalam porsi kecil namun sering; hindari mengonsumsi susu, yogurt, kopi, alkohol, keju, serta makanan pedas, berserat tinggi, atau tinggi lemak; mengonsumsi oralit',
 }
 
 rules = {
-    'A01': {'gejala': ['G01', 'G02', 'G03', 'G04'], 'solusi': 'S01'},
-    'A02': {'gejala': ['G01', 'G02', 'G03', 'G10', 'G15'], 'solusi': 'S02'},
-    'A03': {'gejala': ['G01', 'G03', 'G05', 'G09', 'G12'], 'solusi': 'S03'},
-    'A04': {'gejala': ['G01', 'G02', 'G07', 'G08'], 'solusi': 'S04'},
-    'A05': {'gejala': ['G02', 'G03', 'G06', 'G13', 'G14', 'G15'], 'solusi': 'S05'},
+    'A01': {'gejala': ['G01', 'G21', 'G02', 'G03', 'G04', 'G19', 'G10', 'G15', 'G20', 'G17'], 'solusi': 'S01'},
+    'A02': {'gejala': ['G01', 'G21', 'G02', 'G19', 'G22', 'G11', 'G03', 'G10', 'G15'], 'solusi': 'S02'},
+    'A03': {'gejala': ['G19', 'G01', 'G21', 'G23', 'G24', 'G02', 'G03', 'G05', 'G09', 'G12'], 'solusi': 'S03'},
+    'A04': {'gejala': ['G02', 'G03', 'G01', 'G21', 'G10', 'G07', 'G13'], 'solusi': 'S04'},
+    'A05': {'gejala': ['G01', 'G02', 'G03', 'G04', 'G06', 'G13', 'G14', 'G15', 'G10', 'G07', 'G17'], 'solusi': 'S05'},
+    'A06': {'gejala': ['G10', 'G20', 'G25', 'G03'], 'solusi': 'S06'},
+    'A07': {'gejala': ['G02', 'G03', 'G10', 'G04', 'G12', 'G19', 'G01'], 'solusi': 'S07'},
+    'A08': {'gejala': ['G26', 'G27', 'G01', 'G22', 'G28', 'G29'], 'solusi': 'S08'},
 }
-
-def checkGejala():
-    pilihan = request.form.get('pilihan')
-    if pilihan == 'ya':
-        return True
-    elif pilihan == 'tidak':
-        return False
-    else:
-        return None
 
 def evaluate_gejala(gejala_list):
     for diagnosis, rule in rules.items():
@@ -62,359 +75,138 @@ def evaluate_gejala(gejala_list):
             return diagnosis
     return None
 
+# ROUTE WEBSITE
+
+# INDEX
 @app.route('/')
+@app.route('/index')
 def index():
-    session.clear()
-    session['gejalaPasien'] = 'G01'
-    session['logs'] = []
-    return render_template('index.html', link=url_for('index'))
+    return render_template('index.html')
 
-@app.route('/welcome', methods=['POST', 'GET'])
-def welcome():
+# TUKAK LAMBUNG
+@app.route('/tukaklambung')
+def tukak_lambung():
+    return render_template('tukak.html')
+
+# GASTROPARESIS
+@app.route('/gastroparesis')
+def gastroparesis():
+    return render_template('gastroparesis.html')
+
+# GERD
+@app.route('/gerd')
+def gerd():
+    return render_template('gerd.html')
+
+# GASTRITIS
+@app.route('/gastritis')
+def gastritis():
+    return render_template('gastritis.html')
+
+# KANKER LAMBUNG
+@app.route('/kanker')
+def kanker_lambung():
+    return render_template('kanker.html')
+
+# SINDROM DISPEPSIA
+@app.route('/dispepsia')
+def sindrom_dispepsia():
+    return render_template('dispepsia.html')
+
+# MAAG
+@app.route('/maag')
+def maag():
+    return render_template('maag.html')
+
+# GASTROENTERITIS
+@app.route('/gastroentritis')
+def gastroentritis():
+    return render_template('gastroentritis.html')
+
+
+@app.route('/identitas', methods=['POST', 'GET'])
+def identitas():
     if request.method == 'POST':
-        name = request.form.get('Name')
-        session['namaPasien'] = name
-        gejalanya = session['gejalaPasien']
-        pertanyaan = daftarGejala[gejalanya]
-        return render_template("welcome.html", name=name, pertanyaan=pertanyaan, link=url_for('index'))
+        # Ambil data dari form
+        nama_lengkap = request.form.get('nama_lengkap')
+        tanggal_lahir = request.form.get('tanggal_lahir')
+        no_handphone = request.form.get('no_handphone')
+        tanggal_diagnosa = request.form.get('tanggal_diagnosa')
+        alamat = request.form.get('alamat')
+        
+        # Validasi data
+        if not all([nama_lengkap, tanggal_lahir, no_handphone, tanggal_diagnosa, alamat]):
+            return render_template('identitas.html', error="Harap isi semua field")
 
-@app.route('/result', methods=['POST', 'GET'])
-def result():
+        # Simpan data di sesi
+        session['nama_lengkap'] = nama_lengkap
+        session['tanggal_lahir'] = tanggal_lahir
+        session['no_handphone'] = no_handphone
+        session['tanggal_diagnosa'] = tanggal_diagnosa
+        session['alamat'] = alamat
+
+        # Debugging: Print data session untuk memastikan tersimpan
+        print(session)
+
+        # Arahkan ke form diagnosis
+        return redirect(url_for('form_diagnosis'))
+
+    return render_template('identitas.html')
+
+
+@app.route('/form', methods=['POST', 'GET'])
+def form_diagnosis():
     if request.method == 'POST':
-        gejala_terjadi = checkGejala()
+        name = request.form.get('nama_lengkap')
+        session['nama_lengkap'] = name
+        tanggal_lahir = request.form.get('tanggal_lahir')
+        session['tanggal_lahir'] = tanggal_lahir
+        no_handphone = request.form.get('no_handphone')
+        session['no_handphone'] = no_handphone
+        tanggal_diagnosa = request.form.get('tanggal_diagnosa')
+        session['tanggal_diagnosa'] = tanggal_diagnosa
+        alamat = request.form.get('alamat')
+        session['alamat'] = alamat
+    questions = daftarGejala
+    return render_template('form.html', questions=questions)
 
-        if gejala_terjadi is None:
-            return redirect(url_for('diagnosa'))
 
-        current_gejala = session['gejalaPasien']
-        if gejala_terjadi:
-            session['logs'].append(current_gejala)
 
-        diagnosis = evaluate_gejala(session['logs'])
+@app.route('/hasil', methods=['POST'])
+def hasil_diagnosis():
+    
+    if request.method == 'POST':
+        logs = []
+
+        # Loop through all the gejala and check if they are selected ('ya')
+        for key in daftarGejala.keys():
+            pilihan = request.form.get(key)
+            if pilihan == 'ya':
+                logs.append(key)
+
+        # Save the selected gejala in the session
+        session['logs'] = logs
+
+        # Evaluate the selected gejala to determine the diagnosis
+        diagnosis = evaluate_gejala(logs)
         if diagnosis:
+            # If a diagnosis is found, get the disease and solution
             terjangkitPenyakit = daftarPenyakit[diagnosis]
             solusi_id = rules[diagnosis]['solusi']
-            solusiPenyakitnya = "Solusi: " + solusiPenyakit[solusi_id]
-            return render_template("result.html", terjangkitPenyakit=terjangkitPenyakit, solusiPenyakitnya=solusiPenyakitnya, awal=url_for('index'))
-        
-        # Find the next gejala ID
-        current_index = list(daftarGejala.keys()).index(current_gejala)
-        next_index = current_index + 1
-        if next_index >= len(daftarGejala):
-            terjangkitPenyakit = "Maaf Sistem kami belum bisa menjawab pertanyaan anda"
-            return render_template("result.html", terjangkitPenyakit=terjangkitPenyakit, awal=url_for('index'))
-        
-        session['gejalaPasien'] = list(daftarGejala.keys())[next_index]
-        return redirect(url_for('diagnosa'))
+            solusiPenyakitnya = solusiPenyakit[solusi_id]
+            return render_template("hasil.html", 
+                                   terjangkitPenyakit=terjangkitPenyakit, 
+                                   solusiPenyakitnya=solusiPenyakitnya,
+                                   show_modal=True)  # Add flag to trigger modal
 
-@app.route('/diagnosa', methods=['POST', 'GET'])
-def diagnosa():
-    name = session['namaPasien']
-    pertanyaan = daftarGejala[session['gejalaPasien']]
-    return render_template("diagnosa.html", pertanyaan=pertanyaan, name=name, link=url_for('index'))
+        # If no diagnosis can be determined
+        terjangkitPenyakit = "Maaf, sistem kami belum dapat menentukan penyakit Anda, periksakan ke dokter untuk mendapatkan hasil diagnosa yang lebih akurat."
+        return render_template("hasil.html", 
+                               terjangkitPenyakit=terjangkitPenyakit,
+                               show_modal=True)  # Add flag to trigger modal
+
+    return redirect(url_for('form_diagnosis'))
+    
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-
-
-
-
-
-
-
-
-
-# from flask import Flask, session, redirect, url_for, render_template, request
-# from markupsafe import Markup
-
-# app = Flask(__name__)
-# app.secret_key = 'isinya password buat session'
-# app.static_folder = 'static'
-
-# daftarGejala = [
-#     'Mual pada perut ',
-#     'Nyeri di ulu hati ',
-#     'Perut kembung ',
-#     'Sendawa berlebih',
-#     'Sulit tidur ',
-#     'Anemia ',
-#     'BAB berwarna hitam',
-#     'Sering Cegukan ',
-#     'Sakit tenggorokan ',
-#     'Mudah merasa kenyang',
-#     'Kadar gula darah tidak terkontrol ',
-#     'Asam dan pahit pada mulut ',
-#     'Muntah darah ',
-#     'BAB Berdarah ',
-#     'Penurunan berat badan ',
-# ]
-
-# daftarPenyakit = [
-#     'Tukak Lambung (Ulkus Peptikum)',
-#     'Gastroparesis',
-#     'GERD (Gastroesophageal Reflux Disease)',
-#     'Gastritis ',
-#     'Kanker lambung ',
-# ]
-
-# solusiPenyakit = [
-#     'Hindari makanan pedas, asam, dan berlemak; berhenti merokok; hindari alkohol.',
-#     'Makan dalam porsi kecil dan sering; hindari makanan tinggi serat dan lemak; mengkonsumsi makanan lunak atau cair.',
-#     'Makan dalam porsi kecil dan sering; hindari makanan pedas, berlemak, dan asam; hindari makan sebelum tidur; Menurunkan berat badan jika kelebihan berat badan.',
-#     'Makan dalam porsi kecil dan sering; hindari makanan pedas, berlemak, dan asam; Mengelola stres dengan teknik relaksasi; hindari alkohol dan merokok.',
-#     'Operasi; kemoterapi; Dukungan nutrisi untuk menjaga berat badan dan kesehatan; konseling untuk dukungan emosional dan psikologis.',
-# ]
-
-# rules = {
-#     'A01': {'gejala': [0, 1, 2, 3]},
-#     'A02': {'gejala': [0, 1, 2, 9, 14]},
-#     'A03': {'gejala': [0, 2, 4, 8, 11]},
-#     'A04': {'gejala': [0, 1, 6, 7]},
-#     'A05': {'gejala': [1, 2, 5, 12, 13, 14]},
-# }
-
-# def checkGejala():
-#     pilihan = request.form.get('pilihan')
-#     if pilihan == 'ya':
-#         return True
-#     elif pilihan == 'tidak':
-#         return False
-#     else:
-#         return None
-
-# def evaluate_gejala(gejala_list):
-#     for diagnosis, rule in rules.items():
-#         if all(gejala in gejala_list for gejala in rule['gejala']):
-#             return diagnosis
-#     return None
-
-# @app.route('/')
-# def index():
-#     session.clear()
-#     session['gejalaPasien'] = 0
-#     session['logs'] = []
-#     return render_template('index.html', link=url_for('index'))
-
-# @app.route('/welcome', methods=['POST', 'GET'])
-# def welcome():
-#     if request.method == 'POST':
-#         name = request.form.get('Name')
-#         session['namaPasien'] = name
-#         gejalanya = session['gejalaPasien']
-#         pertanyaan = daftarGejala[gejalanya]
-#         return render_template("welcome.html", name=name, pertanyaan=pertanyaan, link=url_for('index'))
-
-# @app.route('/result', methods=['POST', 'GET'])
-# def result():
-#     if request.method == 'POST':
-#         gejala_terjadi = checkGejala()
-
-#         if gejala_terjadi is None:
-#             return redirect(url_for('diagnosa'))
-
-#         current_gejala = session['gejalaPasien']
-#         if gejala_terjadi:
-#             session['logs'].append(current_gejala)
-
-#         diagnosis = evaluate_gejala(session['logs'])
-#         if diagnosis:
-#             penyakit_index = list(rules.keys()).index(diagnosis)
-#             terjangkitPenyakit = daftarPenyakit[penyakit_index]
-#             solusiPenyakitnya = "Solusi: " + solusiPenyakit[penyakit_index]
-#             return render_template("result.html", terjangkitPenyakit=terjangkitPenyakit, solusiPenyakitnya=solusiPenyakitnya, awal=url_for('index'))
-        
-#         session['gejalaPasien'] += 1
-#         if session['gejalaPasien'] >= len(daftarGejala):
-#             terjangkitPenyakit = "Maaf Sistem kami belum bisa menjawab pertanyaan anda"
-#             return render_template("result.html", terjangkitPenyakit=terjangkitPenyakit, awal=url_for('index'))
-        
-#         return redirect(url_for('diagnosa'))
-
-# @app.route('/diagnosa', methods=['POST', 'GET'])
-# def diagnosa():
-#     name = session['namaPasien']
-#     pertanyaan = daftarGejala[session['gejalaPasien']]
-#     return render_template("diagnosa.html", pertanyaan=pertanyaan, name=name, link=url_for('index'))
-
-# if __name__ == '__main__':
-#     app.run(debug=True)
-
-
-
-
-
-
-
-
-
-
-# from flask import Flask, session, redirect, url_for, render_template, request
-# from markupsafe import Markup
-
-# app = Flask(__name__)
-# app.secret_key = 'isinya password buat session'
-# app.static_folder = 'static'
-
-# daftarGejala = [
-#     'Mual pada perut ',
-#     'Nyeri di ulu hati ',
-#     'Perut kembung ',
-#     'Sendawa berlebih',
-#     'Sulit tidur ',
-#     'Anemia ',
-#     'BAB berwarna hitam',
-#     'Sering Cegukan ',
-#     'Sakit tenggorokan ',
-#     'Mudah merasa kenyang',
-#     'Kadar gula darah tidak terkontrol ',
-#     'Asam dan pahit pada mulut ',
-#     'Muntah darah ',
-#     'BAB Berdarah ',
-#     'Penurunan berat badan ',
-# ]
-
-# daftarPenyakit = [
-#     'Tukak Lambung (Ulkus Peptikum)',
-#     'Gastroparesis',
-#     'GERD (Gastroesophageal Reflux Disease)',
-#     'Gastritis ',
-#     'Kanker lambung ',
-# ]
-
-# solusiPenyakit = [
-#     'Hindari makanan pedas, asam, dan berlemak; berhenti merokok; hindari alkohol.',
-#     'Makan dalam porsi kecil dan sering; hindari makanan tinggi serat dan lemak; mengkonsumsi makanan lunak atau cair.',
-#     'Makan dalam porsi kecil dan sering; hindari makanan pedas, berlemak, dan asam; hindari makan sebelum tidur; Menurunkan berat badan jika kelebihan berat badan.',
-#     'Makan dalam porsi kecil dan sering; hindari makanan pedas, berlemak, dan asam; Mengelola stres dengan teknik relaksasi; hindari alkohol dan merokok.',
-#     'Operasi; kemoterapi; Dukungan nutrisi untuk menjaga berat badan dan kesehatan; konseling untuk dukungan emosional dan psikologis.',
-# ]
-
-# def checkGejala():
-#     pilihan = request.form.get('pilihan')
-#     if pilihan == 'ya':
-#         return True
-#     elif pilihan == 'tidak':
-#         return False
-#     else:
-#         return None
-
-# @app.route('/')
-# def index():
-#     session.pop('namaPasien', None)
-#     session.pop('gejalaPasien', None)
-#     session.pop('logs', None)
-#     session.pop('logs2', None)
-#     session['gejalaPasien'] = 0
-#     session['logs'] = 0
-#     session['logs2'] = 0
-#     return render_template('index.html', link=url_for('index'))
-
-# @app.route('/welcome', methods=['POST', 'GET'])
-# def welcome():
-#     if request.method == 'POST':
-#         name = request.form.get('Name')
-#         session['namaPasien'] = name
-#         gejalanya = session['gejalaPasien']
-#         pertanyaan = daftarGejala[gejalanya]
-#         return render_template("welcome.html", name=name, pertanyaan=pertanyaan, link=url_for('index'))
-
-# @app.route('/result', methods=['POST', 'GET'])
-# def result():
-#     if request.method == 'POST':
-#         gejala_terjadi = checkGejala()
-
-#         if gejala_terjadi is None:
-#             return redirect(url_for('diagnosa'))
-
-#         #=============================================================Logs 0
-#         if session['logs'] == 0 and gejala_terjadi:
-#             if session['gejalaPasien'] == 0:  # penyakit 1, penyakit 4, penyakit 2, penyakit 3
-#                 session['gejalaPasien'] = 1
-#                 session['logs'] = 1
-#                 return redirect(url_for('diagnosa'))
-#             elif session['gejalaPasien'] == 1:  # penyakit 5
-#                 session['gejalaPasien'] = 2
-#                 session['logs'] = 1
-#                 return redirect(url_for('diagnosa'))
-
-#         #=============================================================Logs 1
-#         elif session['logs'] == 1 and gejala_terjadi:
-#             if session['gejalaPasien'] == 1:  # penyakit 1, penyakit 4, penyakit 2
-#                 session['gejalaPasien'] = 2
-#                 session['logs'] = 2
-#                 return redirect(url_for('diagnosa'))
-#             elif session['gejalaPasien'] == 2:  # penyakit 5
-#                 session['gejalaPasien'] = 5
-#                 session['logs'] = 2
-#                 return redirect(url_for('diagnosa'))
-
-#         #=============================================================Logs 2
-#         elif session['logs'] == 2 and gejala_terjadi:
-#             if session['gejalaPasien'] == 2:  # penyakit 1, penyakit 2
-#                 session['gejalaPasien'] = 3
-#                 session['logs'] = 3
-#                 return redirect(url_for('diagnosa'))
-#             elif session['gejalaPasien'] == 6:  # penyakit 4
-#                 session['gejalaPasien'] = 7
-#                 session['logs'] = 3
-#                 return redirect(url_for('diagnosa'))
-#             elif session['gejalaPasien'] == 5:  # penyakit 5
-#                 session['gejalaPasien'] = 12
-#                 session['logs'] = 3
-#                 return redirect(url_for('diagnosa'))
-#             elif session['gejalaPasien'] == 10:  # penyakit 3
-#                 session['gejalaPasien'] = 11
-#                 session['logs'] = 3
-#                 return redirect(url_for('diagnosa'))
-
-#         #=============================================================Logs 3
-#         elif session['logs'] == 3 and gejala_terjadi:
-#             if session['gejalaPasien'] == 7:  # penyakit 4
-#                 terjangkitPenyakit = daftarPenyakit[3]
-#                 solusiPenyakitnya = "Solusi: " + solusiPenyakit[3]
-#                 return render_template("result.html", terjangkitPenyakit=terjangkitPenyakit, solusiPenyakitnya=solusiPenyakitnya, awal=url_for('index'))
-#             if session['gejalaPasien'] == 3:  # penyakit 1
-#                 terjangkitPenyakit = daftarPenyakit[0]
-#                 solusiPenyakitnya = "Solusi: " + solusiPenyakit[0]
-#                 return render_template("result.html", terjangkitPenyakit=terjangkitPenyakit, solusiPenyakitnya=solusiPenyakitnya, awal=url_for('index'))
-#             if session['gejalaPasien'] == 12:  # penyakit 5
-#                 session['gejalaPasien'] = 13
-#                 session['logs'] = 4
-#                 return redirect(url_for('diagnosa'))
-#             if session['gejalaPasien'] == 11:  # penyakit 3
-#                 terjangkitPenyakit = daftarPenyakit[2]
-#                 solusiPenyakitnya = "Solusi: " + solusiPenyakit[2]
-#                 return render_template("result.html", terjangkitPenyakit=terjangkitPenyakit, solusiPenyakitnya=solusiPenyakitnya, awal=url_for('index'))
-
-#         #=============================================================Logs 4
-#         elif session['logs'] == 4 and gejala_terjadi:
-#             if session['gejalaPasien'] == 14:  # penyakit 2
-#                 terjangkitPenyakit = daftarPenyakit[1]
-#                 solusiPenyakitnya = "Solusi: " + solusiPenyakit[1]
-#                 return render_template("result.html", terjangkitPenyakit=terjangkitPenyakit, solusiPenyakitnya=solusiPenyakitnya, awal=url_for('index'))
-#             if session['gejalaPasien'] == 13:  # penyakit 5
-#                 session['gejalaPasien'] = 14
-#                 session['logs'] = 5
-#                 return redirect(url_for('diagnosa'))
-
-#         #=============================================================Logs 5
-#         elif session['logs'] == 5 and gejala_terjadi:
-#             if session['gejalaPasien'] == 14:  # penyakit 5
-#                 terjangkitPenyakit = daftarPenyakit[4]
-#                 solusiPenyakitnya = "Solusi: " + solusiPenyakit[4]
-#                 return render_template("result.html", terjangkitPenyakit=terjangkitPenyakit, solusiPenyakitnya=solusiPenyakitnya, awal=url_for('index'))
-
-#         #=============================================================Logs 1
-#         else:
-#             terjangkitPenyakit = "Maaf Sistem kami belum bisa menjawab pertanyaan anda"
-#             return render_template("result.html", terjangkitPenyakit=terjangkitPenyakit, awal=url_for('index'))
-
-# @app.route('/diagnosa', methods=['POST', 'GET'])
-# def diagnosa():
-#     name = session['namaPasien']
-#     pertanyaan = daftarGejala[session['gejalaPasien']]
-#     return render_template("diagnosa.html", pertanyaan=pertanyaan, name=name, link=url_for('index'))
-
-# if __name__ == '__main__':
-#     app.run(debug=True)

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" />
+
+    <!--========== BOX ICONS ==========-->
+    <link
+      href="https://cdn.jsdelivr.net/npm/boxicons@2.0.5/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+
+    <!--========== CSS ==========-->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+
+    <title>GASTRO - Sistem Pakar Diagnosis Penyakit Lambung</title>
+  </head>
+  <body>
+    <!--========== SCROLL TOP ==========-->
+    <a href="#" class="scrolltop" id="scroll-top">
+      <i class="bx bx-chevron-up scrolltop__icon"></i>
+    </a>
+
+    <!--========== HEADER ==========-->
+    <header class="l-header" id="header">
+      <nav class="nav bd-container">
+        <a href="{{ url_for('index') }}" class="nav__logo"
+          >Sistem Pakar <span style="font-style: italic">GASTRO</span></a
+        >
+
+        <div class="nav__menu" id="nav-menu">
+          <ul class="nav__list">
+            <li class="nav__item">
+              <a href="{{ url_for('index') }}" class="nav__link active-link"
+                >Home</a
+              >
+            </li>
+            <li class="nav__item">
+              <a href="{{ url_for('index') }}#about" class="nav__link">About</a>
+            </li>
+            <li class="nav__item">
+              <a href="{{ url_for('index') }}#services" class="nav__link"
+                >Jenis Penyakit</a
+              >
+            </li>
+          </ul>
+        </div>
+
+        <div class="nav__toggle" id="nav-toggle">
+          <i class="bx bx-menu"></i>
+        </div>
+      </nav>
+    </header>
+
+    <main class="l-main">
+      <section
+        class="tukak-lambung section"
+        id="tukak-lambung"
+        style="margin-top: 50px"
+      >
+        <div class="content">
+          <div class="form-section">
+            <div class="form-header">Form Diagnosa</div>
+            <form
+              action="{{ url_for('hasil_diagnosis') }}"
+              method="POST"
+              class="form-inputs"
+            >
+              <ol class="questions-list">
+                {% for key, question in questions.items() %}
+                <li>
+                  <p>{{ question }}</p>
+                  <div class="question-options">
+                    <input
+                      type="radio"
+                      id="ya_{{ key }}"
+                      name="{{ key }}"
+                      value="ya"
+                    />
+                    <label for="ya_{{ key }}">Ya</label>
+                    <input
+                      type="radio"
+                      id="tidak_{{ key }}"
+                      name="{{ key }}"
+                      value="tidak"
+                    />
+                    <label for="tidak_{{ key }}">Tidak</label>
+                  </div>
+                </li>
+                {% endfor %}
+              </ol>
+              <!-- Centering the button using a container -->
+              <div class="button-container">
+                <div class="centered-div">
+                  <button type="submit" class="button-hasil">
+                    Lihat Hasil Diagnosa
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Modal -->
+    <div id="diagnosis-modal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h1>Hasil Diagnosis</h1>
+        <p>
+          <strong>Penyakit yang Terdiagnosa:</strong>
+          <span id="modal-terjangkitPenyakit"></span>
+        </p>
+        <p id="modal-solusi-container">
+          <strong>Solusi yang Direkomendasikan:</strong>
+          <span id="modal-solusiPenyakitnya"></span>
+        </p>
+        <a href="{{ url_for('index') }}" class="button-hasil"
+          >Kembali ke Halaman Utama</a
+        >
+      </div>
+    </div>
+
+    <!--========== FOOTER ==========-->
+    <footer class="footer section bd-container">
+      <div class="footer__container bd-grid">
+        <div class="footer__content">
+          <a href="#" class="footer__logo">GASTRO</a>
+          <span class="footer__description">Expert System</span>
+          <div>
+            <a href="#" class="footer__social"
+              ><i class="bx bxl-facebook"></i
+            ></a>
+            <a href="#" class="footer__social"
+              ><i class="bx bxl-instagram"></i
+            ></a>
+            <a href="#" class="footer__social"
+              ><i class="bx bxl-twitter"></i
+            ></a>
+          </div>
+        </div>
+
+        <div class="footer__content">
+          <h3 class="footer__title">Services</h3>
+          <ul>
+            <li>
+              <a href="{{ url_for('index') }}" class="footer__link">Home</a>
+            </li>
+            <li>
+              <a href="{{ url_for('index') }}#about" class="footer__link"
+                >About</a
+              >
+            </li>
+            <li>
+              <a href="{{ url_for('index') }}#services" class="footer__link"
+                >Jenis Penyakit</a
+              >
+            </li>
+          </ul>
+        </div>
+
+        <div class="footer__content">
+          <h3 class="footer__title">Address</h3>
+          <ul>
+            <li>Universitas Airlangga Surabaya</li>
+            <li>Jl. Airlangga No 4-6, Surabaya</li>
+            <li>vokasi.unair.ac.id</li>
+          </ul>
+        </div>
+      </div>
+
+      <p class="footer__copy">
+        &#169; 2024 Kecerdasan Buatan Praktikum Kel 8. All right reserved
+      </p>
+    </footer>
+
+    <!--========== SCROLL REVEAL ==========-->
+    <script src="https://unpkg.com/scrollreveal"></script>
+
+    <!--========== MAIN JS ==========-->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+    <!-- Modal JavaScript -->
+    <script>
+      document
+        .getElementById("diagnosis-form")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          // Collect form data
+          const formData = new FormData(this);
+          const data = {};
+          formData.forEach((value, key) => {
+            data[key] = value;
+          });
+
+          // For demonstration, set static values (Replace with actual form processing logic)
+          const terjangkitPenyakit = "Penyakit X"; // Example value
+          const solusiPenyakitnya = "Solusi Y"; // Example value
+
+          // Populate modal with diagnosis result
+          document.getElementById("modal-terjangkitPenyakit").innerText =
+            terjangkitPenyakit;
+          if (solusiPenyakitnya) {
+            document.getElementById("modal-solusi-container").style.display =
+              "block";
+            document.getElementById("modal-solusiPenyakitnya").innerText =
+              solusiPenyakitnya;
+          } else {
+            document.getElementById("modal-solusi-container").style.display =
+              "none";
+          }
+
+          // Show the modal
+          const modal = document.getElementById("diagnosis-modal");
+          modal.style.display = "block";
+        });
+
+      // Close the modal when the user clicks the close button or outside the modal
+      document
+        .querySelector(".modal .close")
+        .addEventListener("click", function () {
+          document.getElementById("diagnosis-modal").style.display = "none";
+        });
+      window.addEventListener("click", function (event) {
+        const modal = document.getElementById("diagnosis-modal");
+        if (event.target === modal) {
+          modal.style.display = "none";
+        }
+      });
+    </script>
+  </body>
+</html>

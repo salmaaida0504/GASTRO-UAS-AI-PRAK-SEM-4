@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!--========== FAVICON ==========-->
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" />
+
+    <!--========== BOX ICONS ==========-->
+    <link
+      href="https://cdn.jsdelivr.net/npm/boxicons@2.0.5/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+
+    <!--========== CSS ==========-->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+
+    <title>GASTRO - Sistem Pakar Diagnosis Penyakit Lambung</title>
+  </head>
+  <body>
+    <!--========== SCROLL TOP ==========-->
+    <a href="#" class="scrolltop" id="scroll-top">
+      <i class="bx bx-chevron-up scrolltop__icon"></i>
+    </a>
+
+    <!--========== HEADER ==========-->
+    <header class="l-header" id="header">
+      <nav class="nav bd-container">
+        <a href="{{ url_for('index') }}" class="nav__logo"
+          >Sistem Pakar <span style="font-style: italic">GASTRO</span></a
+        >
+
+        <div class="nav__menu" id="nav-menu">
+          <ul class="nav__list">
+            <li class="nav__item">
+              <a
+                href="{{ url_for('index') }}#home"
+                class="nav__link active-link"
+                >Home</a
+              >
+            </li>
+            <li class="nav__item">
+              <a href="{{ url_for('index') }}#about" class="nav__link">About</a>
+            </li>
+            <li class="nav__item">
+              <a href="{{ url_for('index') }}#services" class="nav__link"
+                >Jenis Penyakit</a
+              >
+            </li>
+          </ul>
+        </div>
+
+        <div class="nav__toggle" id="nav-toggle">
+          <i class="bx bx-menu"></i>
+        </div>
+      </nav>
+    </header>
+
+    <main class="l-main">
+      <section
+        class="tukak-lambung section"
+        id="tukak-lambung"
+        style="margin-top: 50px"
+      >
+        <div class="content">
+          <h2>Tukak Lambung</h2>
+          <!-- Perbaiki url gambar -->
+          <img
+            src="{{ url_for('static', filename='img/tukak-lambung.jpg') }}"
+            alt="Tukak Lambung"
+          />
+          <p class="subtitle">
+            Tukak lambung adalah luka pada lapisan dalam lambung yang
+            menyebabkan nyeri dan ketidaknyamanan. Kondisi ini bisa terjadi
+            ketika asam lambung merusak lapisan pelindung mukosa lambung.
+          </p>
+          <div class="accordion">
+            <div class="accordion-item">
+              <h3>
+                Gejala
+                <i id="accordion" class="bx bx-chevron-down accordion-icon"></i>
+              </h3>
+              <p>
+                Gejala umum dari tukak lambung termasuk nyeri ulu hati, kembung,
+                mual, dan dalam beberapa kasus muntah darah atau tinja berwarna
+                hitam.
+              </p>
+            </div>
+            <div class="accordion-item">
+              <h3>
+                Penyebab
+                <i id="accordion" class="bx bx-chevron-down accordion-icon"></i>
+              </h3>
+              <p>
+                Penyebab utama tukak lambung meliputi infeksi bakteri
+                Helicobacter pylori dan penggunaan jangka panjang obat
+                antiinflamasi nonsteroid (OAINS). Faktor risiko lainnya adalah
+                kebiasaan merokok, konsumsi alkohol berlebihan, dan stres.
+              </p>
+            </div>
+            <div class="accordion-item">
+              <h3>
+                Diagnosis
+                <i id="accordion" class="bx bx-chevron-down accordion-icon"></i>
+              </h3>
+              <p>
+                Diagnosis tukak lambung biasanya dilakukan melalui endoskopi, di
+                mana dokter menggunakan kamera kecil untuk memeriksa kondisi
+                lambung Anda. Tes lain yang mungkin dilakukan termasuk tes
+                darah, tes napas, atau tes feses untuk mendeteksi infeksi H.
+                pylori.
+              </p>
+            </div>
+            <div class="accordion-item">
+              <h3>
+                Pengobatan
+                <i id="accordion" class="bx bx-chevron-down accordion-icon"></i>
+              </h3>
+              <p>
+                Pengobatan untuk tukak lambung biasanya melibatkan obat untuk
+                mengurangi produksi asam lambung, seperti inhibitor pompa proton
+                (PPI) atau penghambat reseptor H2. Antibiotik mungkin diresepkan
+                jika infeksi H.pylori ditemukan.
+              </p>
+            </div>
+          </div>
+          <!-- Link kembali ke indexpage -->
+          <a href="{{ url_for('index') }}" class="button"
+            >Kembali ke Homepage</a
+          >
+        </div>
+      </section>
+    </main>
+
+    <!--========== FOOTER ==========-->
+    <footer class="footer section bd-container">
+      <div class="footer__container bd-grid">
+        <div class="footer__content">
+          <a href="{{ url_for('index') }}" class="footer__logo">GASTRO</a>
+          <span class="footer__description">Expert System</span>
+          <div>
+            <a href="#" class="footer__social"
+              ><i class="bx bxl-facebook"></i
+            ></a>
+            <a href="#" class="footer__social"
+              ><i class="bx bxl-instagram"></i
+            ></a>
+            <a href="#" class="footer__social"
+              ><i class="bx bxl-twitter"></i
+            ></a>
+          </div>
+        </div>
+
+        <div class="footer__content">
+          <h3 class="footer__title">Services</h3>
+          <ul>
+            <li>
+              <a href="{{ url_for('index') }}#index" class="footer__link"
+                >Home</a
+              >
+            </li>
+            <li>
+              <a href="{{ url_for('index') }}#about" class="footer__link"
+                >About</a
+              >
+            </li>
+            <li>
+              <a href="{{ url_for('index') }}#services" class="footer__link"
+                >Jenis Penyakit</a
+              >
+            </li>
+          </ul>
+        </div>
+
+        <div class="footer__content">
+          <h3 class="footer__title">Address</h3>
+          <ul>
+            <li>Universitas Airlangga Surabaya</li>
+            <li>Jl. Airlangga No 4-6, Surabaya</li>
+            <li>vokasi.unair.ac.id</li>
+          </ul>
+        </div>
+      </div>
+
+      <p class="footer__copy">
+        &#169; 2024 Kecerdasan Buatan Praktikum Kel 8. All right reserved
+      </p>
+    </footer>
+
+    <!--========== SCROLL REVEAL ==========-->
+    <script src="https://unpkg.com/scrollreveal"></script>
+
+    <!--========== MAIN JS ==========-->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+    <script>
+      // Script for accordion functionality
+      document
+        .querySelectorAll(".accordion-item h3")
+        .forEach((accordionHeader) => {
+          accordionHeader.addEventListener("click", () => {
+            const content = accordionHeader.nextElementSibling;
+            content.style.display =
+              content.style.display === "block" ? "none" : "block";
+          });
+        });
+    </script>
+  </body>
+</html>
